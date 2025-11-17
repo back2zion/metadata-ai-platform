@@ -1,0 +1,1310 @@
+완벽한 선택입니다! React는 Streamlit보다 훨씬 더 전문적이고 유연하며, Production 환경에 적합합니다. 
+
+서울아산병원 IDP처럼 **엔터프라이즈급 의료 플랫폼**에는 React가 확실히 더 나은 선택입니다.
+
+---
+
+## **🎯 React 기반 통합 대시보드 아키텍처**
+
+### **기술 스택**
+
+#### **Frontend (React Ecosystem)**
+```json
+{
+  "core": {
+    "react": "^18.2.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0"  // 빠른 개발 서버
+  },
+  "routing": {
+    "react-router-dom": "^6.20.0"
+  },
+  "state_management": {
+    "zustand": "^4.4.7",  // Redux보다 가볍고 간단
+    "react-query": "^5.0.0"  // 서버 상태 관리
+  },
+  "ui_framework": {
+    "antd": "^5.12.0",  // 엔터프라이즈 UI 라이브러리
+    "@ant-design/pro-components": "^2.6.0"  // ProLayout, ProTable 등
+  },
+  "visualization": {
+    "recharts": "^2.10.0",  // React 친화적
+    "apache-echarts": "^5.4.0",  // 강력한 차트
+    "plotly.js": "^2.27.0"  // 3D, 과학 시각화
+  },
+  "data_grid": {
+    "ag-grid-react": "^31.0.0"  // 엔터프라이즈급 테이블
+  },
+  "form": {
+    "react-hook-form": "^7.49.0",  // 폼 관리
+    "zod": "^3.22.0"  // 스키마 검증
+  },
+  "api": {
+    "axios": "^1.6.0"
+  }
+}
+```
+
+#### **Backend (FastAPI)**
+```python
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+sqlalchemy==2.0.25
+asyncpg==0.29.0  # 비동기 PostgreSQL
+redis==5.0.1
+celery==5.3.4
+pydantic==2.5.3
+```
+
+---
+
+## **프로젝트 구조**
+
+```
+C:\projects\datastreams\asan\
+├── frontend/                    # React 애플리케이션
+│   ├── src/
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   ├── layouts/            # 레이아웃 컴포넌트
+│   │   │   ├── MainLayout.tsx
+│   │   │   └── AuthLayout.tsx
+│   │   ├── pages/              # 7개 SFR 페이지
+│   │   │   ├── Home/
+│   │   │   │   └── index.tsx
+│   │   │   ├── SFR001_Common/
+│   │   │   │   └── SystemArchitecture.tsx
+│   │   │   ├── SFR002_DataMart/
+│   │   │   │   ├── index.tsx
+│   │   │   │   ├── MartDesigner.tsx
+│   │   │   │   └── DataQuality.tsx
+│   │   │   ├── SFR003_BI/
+│   │   │   │   ├── index.tsx
+│   │   │   │   ├── Dashboard.tsx
+│   │   │   │   └── ReportBuilder.tsx
+│   │   │   ├── SFR004_OLAP/
+│   │   │   │   ├── index.tsx
+│   │   │   │   ├── SliceDice.tsx
+│   │   │   │   ├── PivotTable.tsx
+│   │   │   │   └── DrillDown.tsx
+│   │   │   ├── SFR005_ETL/
+│   │   │   │   ├── index.tsx
+│   │   │   │   ├── PipelineMonitor.tsx
+│   │   │   │   └── JobScheduler.tsx
+│   │   │   ├── SFR006_AI/
+│   │   │   │   ├── index.tsx
+│   │   │   │   ├── JupyterHub.tsx
+│   │   │   │   └── ResourceMonitor.tsx
+│   │   │   └── SFR007_CDW/
+│   │   │       ├── index.tsx
+│   │   │       ├── Text2SQL.tsx
+│   │   │       └── ResearchSupport.tsx
+│   │   ├── components/         # 공통 컴포넌트
+│   │   │   ├── Chart/
+│   │   │   │   ├── LineChart.tsx
+│   │   │   │   ├── BarChart.tsx
+│   │   │   │   └── PieChart.tsx
+│   │   │   ├── DataTable/
+│   │   │   │   └── AGGridTable.tsx
+│   │   │   ├── Filter/
+│   │   │   │   └── AdvancedFilter.tsx
+│   │   │   └── Layout/
+│   │   │       ├── Sidebar.tsx
+│   │   │       └── Header.tsx
+│   │   ├── services/           # API 서비스
+│   │   │   ├── api.ts
+│   │   │   ├── auth.ts
+│   │   │   └── modules/
+│   │   │       ├── datamart.ts
+│   │   │       ├── olap.ts
+│   │   │       └── text2sql.ts
+│   │   ├── stores/             # Zustand 스토어
+│   │   │   ├── authStore.ts
+│   │   │   ├── uiStore.ts
+│   │   │   └── dataStore.ts
+│   │   ├── hooks/              # 커스텀 훅
+│   │   │   ├── useAuth.ts
+│   │   │   ├── useData.ts
+│   │   │   └── useOLAP.ts
+│   │   ├── types/              # TypeScript 타입
+│   │   │   ├── api.types.ts
+│   │   │   └── domain.types.ts
+│   │   └── utils/
+│   │       ├── formatters.ts
+│   │       └── validators.ts
+│   ├── public/
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── vite.config.ts
+│
+├── backend/                     # FastAPI 백엔드
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── config.py
+│   │   ├── api/
+│   │   │   ├── v1/
+│   │   │   │   ├── router.py
+│   │   │   │   ├── auth.py
+│   │   │   │   ├── datamart.py
+│   │   │   │   ├── olap.py
+│   │   │   │   ├── etl.py
+│   │   │   │   └── text2sql.py
+│   │   ├── models/             # SQLAlchemy 모델
+│   │   │   ├── user.py
+│   │   │   ├── datamart.py
+│   │   │   └── query_history.py
+│   │   ├── schemas/            # Pydantic 스키마
+│   │   │   ├── user.py
+│   │   │   ├── datamart.py
+│   │   │   └── query.py
+│   │   ├── services/           # 비즈니스 로직
+│   │   │   ├── olap_service.py
+│   │   │   ├── text2sql_service.py
+│   │   │   └── etl_service.py
+│   │   ├── core/
+│   │   │   ├── database.py
+│   │   │   ├── security.py
+│   │   │   └── cache.py
+│   │   └── utils/
+│   ├── tests/
+│   ├── requirements.txt
+│   └── alembic/                # DB 마이그레이션
+│
+├── data/                        # 데이터 저장소
+│   ├── raw/                     # AI-Hub 원본
+│   ├── processed/               # 전처리 완료
+│   └── warehouse/               # 데이터마트
+│
+├── docker/
+│   ├── frontend.Dockerfile
+│   ├── backend.Dockerfile
+│   └── docker-compose.yml
+│
+└── README.md
+```
+
+---
+
+## **Step-by-Step 구현 가이드**
+
+### **Step 1: 프로젝트 초기화 (15분)**
+
+```bash
+# 프로젝트 루트
+cd C:\projects\datastreams\asan
+
+# Frontend 초기화
+npm create vite@latest frontend -- --template react-ts
+cd frontend
+npm install
+
+# 필수 패키지 설치
+npm install antd @ant-design/pro-components @ant-design/icons
+npm install react-router-dom zustand @tanstack/react-query
+npm install axios recharts apache-echarts echarts-for-react
+npm install ag-grid-react ag-grid-community
+npm install react-hook-form zod @hookform/resolvers
+npm install dayjs lodash
+npm install -D @types/lodash
+
+# Backend 초기화
+cd ../backend
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+---
+
+### **Step 2: Backend API 구축 (FastAPI)**
+
+#### **`backend/app/main.py`**
+```python
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+from app.api.v1.router import api_router
+from app.core.database import engine, Base
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    # Shutdown
+    await engine.dispose()
+
+app = FastAPI(
+    title="서울아산병원 IDP API",
+    description="통합 데이터 플랫폼 REST API",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+# CORS 설정
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Vite 개발 서버
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# API 라우터 등록
+app.include_router(api_router, prefix="/api/v1")
+
+@app.get("/")
+async def root():
+    return {
+        "message": "서울아산병원 IDP API",
+        "version": "1.0.0",
+        "docs": "/docs"
+    }
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+```
+
+#### **`backend/app/api/v1/router.py`**
+```python
+from fastapi import APIRouter
+from app.api.v1 import auth, datamart, olap, etl, text2sql
+
+api_router = APIRouter()
+
+api_router.include_router(auth.router, prefix="/auth", tags=["인증"])
+api_router.include_router(datamart.router, prefix="/datamart", tags=["데이터마트"])
+api_router.include_router(olap.router, prefix="/olap", tags=["OLAP 분석"])
+api_router.include_router(etl.router, prefix="/etl", tags=["ETL"])
+api_router.include_router(text2sql.router, prefix="/text2sql", tags=["Text2SQL"])
+```
+
+#### **`backend/app/api/v1/olap.py`** (예시)
+```python
+from fastapi import APIRouter, HTTPException
+from typing import List, Optional
+from pydantic import BaseModel
+import pandas as pd
+
+router = APIRouter()
+
+class OLAPQuery(BaseModel):
+    dimensions: List[str]  # ['age_group', 'gender']
+    metrics: List[str]     # ['patient_count', 'avg_duration']
+    filters: Optional[dict] = None
+    drill_level: Optional[str] = None
+
+class OLAPResult(BaseModel):
+    data: List[dict]
+    total_rows: int
+    execution_time_ms: float
+
+@router.post("/query", response_model=OLAPResult)
+async def execute_olap_query(query: OLAPQuery):
+    """OLAP 쿼리 실행"""
+    try:
+        # 실제 구현에서는 DuckDB 또는 ClickHouse 사용
+        # 여기서는 데모용 Mock 데이터
+        
+        # 예시: Pandas로 집계
+        df = pd.DataFrame({
+            'age_group': ['20대', '30대', '40대', '50대'],
+            'patient_count': [150, 230, 180, 120],
+            'avg_duration': [3.2, 4.5, 5.1, 6.8]
+        })
+        
+        result_data = df.to_dict('records')
+        
+        return OLAPResult(
+            data=result_data,
+            total_rows=len(result_data),
+            execution_time_ms=45.2
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/dimensions")
+async def get_available_dimensions():
+    """사용 가능한 차원 목록 조회"""
+    return {
+        "dimensions": [
+            {"id": "age_group", "label": "연령대", "type": "categorical"},
+            {"id": "gender", "label": "성별", "type": "categorical"},
+            {"id": "region", "label": "지역", "type": "categorical"},
+            {"id": "diagnosis", "label": "진단명", "type": "categorical"},
+            {"id": "time", "label": "시간", "type": "temporal"}
+        ]
+    }
+
+@router.get("/metrics")
+async def get_available_metrics():
+    """사용 가능한 지표 목록 조회"""
+    return {
+        "metrics": [
+            {"id": "patient_count", "label": "환자 수", "type": "count"},
+            {"id": "visit_count", "label": "방문 횟수", "type": "sum"},
+            {"id": "avg_duration", "label": "평균 입원일수", "type": "average"},
+            {"id": "cost", "label": "진료비", "type": "sum"}
+        ]
+    }
+```
+
+#### **`backend/app/api/v1/text2sql.py`** 🔥
+```python
+from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
+from typing import Optional
+from app.services.text2sql_service import Text2SQLService
+
+router = APIRouter()
+
+class Text2SQLRequest(BaseModel):
+    question: str
+    context: Optional[dict] = None
+
+class Text2SQLResponse(BaseModel):
+    sql: str
+    explanation: str
+    confidence: float
+    execution_result: Optional[dict] = None
+
+@router.post("/generate", response_model=Text2SQLResponse)
+async def generate_sql_from_text(
+    request: Text2SQLRequest,
+    service: Text2SQLService = Depends()
+):
+    """
+    자연어 질의를 SQL로 변환
+    
+    Example:
+        question: "2023년에 당뇨병 진단받은 50대 환자는 몇 명?"
+    """
+    try:
+        result = await service.natural_language_to_sql(
+            question=request.question,
+            context=request.context
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/execute")
+async def execute_generated_sql(
+    sql: str,
+    service: Text2SQLService = Depends()
+):
+    """생성된 SQL 실행"""
+    try:
+        result = await service.execute_sql(sql)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"SQL 실행 오류: {str(e)}")
+
+@router.get("/history")
+async def get_query_history(limit: int = 10):
+    """최근 질의 이력 조회"""
+    # TODO: 데이터베이스에서 조회
+    return {
+        "queries": [
+            {
+                "id": 1,
+                "question": "2023년 당뇨병 환자 수는?",
+                "sql": "SELECT COUNT(*) FROM ...",
+                "timestamp": "2025-11-17T10:30:00"
+            }
+        ]
+    }
+```
+
+---
+
+### **Step 3: Frontend 구조 구축**
+
+#### **`frontend/src/main.tsx`**
+```tsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ConfigProvider } from 'antd'
+import koKR from 'antd/locale/ko_KR'
+import App from './App'
+import './index.css'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+})
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider locale={koKR}>
+          <App />
+        </ConfigProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+)
+```
+
+#### **`frontend/src/App.tsx`**
+```tsx
+import { Routes, Route, Navigate } from 'react-router-dom'
+import MainLayout from './layouts/MainLayout'
+import Home from './pages/Home'
+import SFR002DataMart from './pages/SFR002_DataMart'
+import SFR003BI from './pages/SFR003_BI'
+import SFR004OLAP from './pages/SFR004_OLAP'
+import SFR005ETL from './pages/SFR005_ETL'
+import SFR006AI from './pages/SFR006_AI'
+import SFR007CDW from './pages/SFR007_CDW'
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Home />} />
+        <Route path="datamart" element={<SFR002DataMart />} />
+        <Route path="bi" element={<SFR003BI />} /> {/* 비아이매트릭스 BI 솔루션 사용 */}
+        <Route path="olap" element={<SFR004OLAP />} /> {/* 비아이매트릭스 OLAP 솔루션 사용 */}
+        <Route path="etl" element={<SFR005ETL />} /> {/* 테라스트림 ETL 솔루션 사용 */}
+        <Route path="ai" element={<SFR006AI />} />
+        <Route path="cdw" element={<SFR007CDW />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  )
+}
+
+export default App
+```
+
+#### **`frontend/src/layouts/MainLayout.tsx`**
+```tsx
+import React, { useState } from 'react'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
+import { Layout, Menu, theme, Typography, Space, Avatar, Dropdown } from 'antd'
+import {
+  HomeOutlined,
+  DatabaseOutlined,
+  BarChartOutlined,
+  FundOutlined,
+  ApiOutlined,
+  RobotOutlined,
+  ExperimentOutlined,
+  UserOutlined,
+  SettingOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons'
+import type { MenuProps } from 'antd'
+
+const { Header, Sider, Content } = Layout
+const { Title, Text } = Typography
+
+const MainLayout: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken()
+
+  const menuItems: MenuProps['items'] = [
+    {
+      key: '/',
+      icon: <HomeOutlined />,
+      label: '홈',
+    },
+    {
+      key: 'group-data',
+      label: '데이터 관리',
+      type: 'group',
+    },
+    { /* 상용 솔루션: 데이터스트림즈 Tera ONE */
+      key: '/datamart',
+      icon: <DatabaseOutlined />,
+      label: 'SFR-002 데이터마트 (Tera ONE)',
+    },
+    { /* 상용 솔루션: 데이터스트림즈 테라스트림 ETL */
+      key: '/etl',
+      icon: <ApiOutlined />,
+      label: 'SFR-005 ETL (테라스트림)',
+    },
+    {
+      key: 'group-analysis',
+      label: '분석 & 시각화',
+      type: 'group',
+    },
+    { /* 상용 솔루션: 비아이매트릭스 BI 플랫폼 */
+      key: '/bi',
+      icon: <BarChartOutlined />,
+      label: 'SFR-003 BI (상용솔루션)',
+    },
+    { /* 상용 솔루션: 비아이매트릭스 OLAP 플랫폼 */
+      key: '/olap',
+      icon: <FundOutlined />,
+      label: 'SFR-004 OLAP (상용솔루션)',
+    },
+    {
+      key: 'group-ai',
+      label: 'AI & 연구',
+      type: 'group',
+    },
+    {
+      key: '/ai',
+      icon: <RobotOutlined />,
+      label: 'SFR-006 AI 환경',
+    },
+    {
+      key: '/cdw',
+      icon: <ExperimentOutlined />,
+      label: 'SFR-007 CDW 연구',
+    },
+  ]
+
+  const userMenuItems: MenuProps['items'] = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: '프로필',
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: '설정',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: '로그아웃',
+      danger: true,
+    },
+  ]
+
+  const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
+    navigate(key)
+  }
+
+  return (
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={250}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      >
+        <div
+          style={{
+            height: 64,
+            margin: 16,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {!collapsed ? (
+            <Space direction="vertical" size={0}>
+              <Title level={4} style={{ margin: 0, color: 'white' }}>
+                아산병원 IDP
+              </Title>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                통합 데이터 플랫폼
+              </Text>
+            </Space>
+          ) : (
+            <Title level={4} style={{ margin: 0, color: 'white' }}>
+              IDP
+            </Title>
+          )}
+        </div>
+        <Menu
+          theme="dark"
+          mode="inline"
+          selectedKeys={[location.pathname]}
+          items={menuItems}
+          onClick={handleMenuClick}
+        />
+      </Sider>
+
+      <Layout style={{ marginLeft: collapsed ? 80 : 250 }}>
+        <Header
+          style={{
+            padding: '0 24px',
+            background: colorBgContainer,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          }}
+        >
+          <Title level={4} style={{ margin: 0 }}>
+            {menuItems.find((item) => item?.key === location.pathname)
+              ?.label || '홈'}
+          </Title>
+
+          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+            <Space style={{ cursor: 'pointer' }}>
+              <Avatar icon={<UserOutlined />} />
+              <Text>관리자</Text>
+            </Space>
+          </Dropdown>
+        </Header>
+
+        <Content
+          style={{
+            margin: '24px 16px',
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          <Outlet />
+        </Content>
+      </Layout>
+    </Layout>
+  )
+}
+
+export default MainLayout
+```
+
+#### **`frontend/src/pages/Home/index.tsx`**
+```tsx
+import React from 'react'
+import { Card, Row, Col, Statistic, Typography, Space, Divider } from 'antd'
+import {
+  DatabaseOutlined,
+  UserOutlined,
+  FileTextOutlined,
+  RiseOutlined,
+} from '@ant-design/icons'
+
+const { Title, Paragraph } = Typography
+
+const Home: React.FC = () => {
+  return (
+    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <div>
+        <Title level={2}>서울아산병원 통합 데이터 플랫폼</Title>
+        <Paragraph>
+          Integrated Data Platform (IDP) POC - 7개 기능요구사항 통합 대시보드
+        </Paragraph>
+      </div>
+
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="데이터마트"
+              value={12}
+              prefix={<DatabaseOutlined />}
+              suffix="개"
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="활성 사용자"
+              value={45}
+              prefix={<UserOutlined />}
+              suffix="명"
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="ETL 작업"
+              value={128}
+              prefix={<FileTextOutlined />}
+              suffix="건"
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="시스템 가용성"
+              value={99.9}
+              prefix={<RiseOutlined />}
+              suffix="%"
+              precision={1}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      <Divider />
+
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={12}>
+          <Card title="최근 활동" bordered={false}>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <div>✅ SFR-004 OLAP 분석 포탈 구현 완료</div>
+              <div>🔄 ETL 파이프라인 설정 중</div>
+              <div>📊 데이터마트 스키마 설계 진행 중</div>
+            </Space>
+          </Card>
+        </Col>
+        <Col xs={24} lg={12}>
+          <Card title="시스템 상태" bordered={false}>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <div>🟢 데이터베이스: 정상</div>
+              <div>🟢 API 서버: 정상</div>
+              <div>🟡 ETL 스케줄러: 점검 중</div>
+            </Space>
+          </Card>
+        </Col>
+      </Row>
+    </Space>
+  )
+}
+
+export default Home
+```
+
+---
+
+### **Step 4: SFR-004 OLAP React 변환 예시**
+
+#### **`frontend/src/pages/SFR004_OLAP/index.tsx`**
+```tsx
+import React, { useState } from 'react'
+import { Tabs, Card } from 'antd'
+import SliceDice from './components/SliceDice'
+import PivotTable from './components/PivotTable'
+import DrillDown from './components/DrillDown'
+import MultiDimensional from './components/MultiDimensional'
+
+const SFR004OLAP: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('slice-dice')
+
+  const tabItems = [
+    {
+      key: 'slice-dice',
+      label: '슬라이스 & 다이스',
+      children: <SliceDice />,
+    },
+    {
+      key: 'pivot',
+      label: '피벗 테이블',
+      children: <PivotTable />,
+    },
+    {
+      key: 'drilldown',
+      label: '드릴다운/롤업',
+      children: <DrillDown />,
+    },
+    {
+      key: 'multi',
+      label: '다차원 분석',
+      children: <MultiDimensional />,
+    },
+  ]
+
+  return (
+    <Card>
+      <Tabs
+        activeKey={activeTab}
+        items={tabItems}
+        onChange={setActiveTab}
+        size="large"
+      />
+    </Card>
+  )
+}
+
+export default SFR004OLAP
+```
+
+#### **`frontend/src/pages/SFR004_OLAP/components/SliceDice.tsx`**
+```tsx
+import React, { useState } from 'react'
+import { Row, Col, Select, Button, Space, Card } from 'antd'
+import { useQuery } from '@tanstack/react-query'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { olapAPI } from '@/services/api'
+
+const SliceDice: React.FC = () => {
+  const [selectedDimensions, setSelectedDimensions] = useState<string[]>(['age_group'])
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(['patient_count'])
+
+  // 사용 가능한 차원 조회
+  const { data: dimensions } = useQuery({
+    queryKey: ['dimensions'],
+    queryFn: olapAPI.getDimensions,
+  })
+
+  // 사용 가능한 지표 조회
+  const { data: metrics } = useQuery({
+    queryKey: ['metrics'],
+    queryFn: olapAPI.getMetrics,
+  })
+
+  // OLAP 쿼리 실행
+  const { data: chartData, isLoading, refetch } = useQuery({
+    queryKey: ['olap-query', selectedDimensions, selectedMetrics],
+    queryFn: () => olapAPI.executeQuery({
+      dimensions: selectedDimensions,
+      metrics: selectedMetrics,
+    }),
+    enabled: false,
+  })
+
+  const handleExecuteQuery = () => {
+    refetch()
+  }
+
+  return (
+    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Card title="필터 설정">
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <div>
+              <label>차원 선택:</label>
+              <Select
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder="차원을 선택하세요"
+                value={selectedDimensions}
+                onChange={setSelectedDimensions}
+                options={dimensions?.dimensions.map(d => ({
+                  label: d.label,
+                  value: d.id,
+                }))}
+              />
+            </div>
+          </Col>
+          <Col span={12}>
+            <div>
+              <label>지표 선택:</label>
+              <Select
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder="지표를 선택하세요"
+                value={selectedMetrics}
+                onChange={setSelectedMetrics}
+                options={metrics?.metrics.map(m => ({
+                  label: m.label,
+                  value: m.id,
+                }))}
+              />
+            </div>
+          </Col>
+        </Row>
+        <div style={{ marginTop: 16 }}>
+          <Button type="primary" onClick={handleExecuteQuery} loading={isLoading}>
+            분석 실행
+          </Button>
+        </div>
+      </Card>
+
+      {chartData && (
+        <Card title="분석 결과">
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={chartData.data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey={selectedDimensions[0]} />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              {selectedMetrics.map((metric, idx) => (
+                <Bar
+                  key={metric}
+                  dataKey={metric}
+                  fill={`hsl(${idx * 60}, 70%, 50%)`}
+                />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      )}
+    </Space>
+  )
+}
+
+export default SliceDice
+```
+
+#### **`frontend/src/services/api.ts`**
+```typescript
+import axios from 'axios'
+
+const apiClient = axios.create({
+  baseURL: 'http://localhost:8000/api/v1',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+// OLAP API
+export const olapAPI = {
+  getDimensions: async () => {
+    const { data } = await apiClient.get('/olap/dimensions')
+    return data
+  },
+  
+  getMetrics: async () => {
+    const { data } = await apiClient.get('/olap/metrics')
+    return data
+  },
+  
+  executeQuery: async (query: {
+    dimensions: string[]
+    metrics: string[]
+    filters?: any
+  }) => {
+    const { data } = await apiClient.post('/olap/query', query)
+    return data
+  },
+}
+
+// Text2SQL API
+export const text2sqlAPI = {
+  generateSQL: async (question: string) => {
+    const { data } = await apiClient.post('/text2sql/generate', { question })
+    return data
+  },
+  
+  executeSQL: async (sql: string) => {
+    const { data } = await apiClient.post('/text2sql/execute', { sql })
+    return data
+  },
+}
+
+export default apiClient
+```
+
+---
+
+### **Step 5: SFR-007 Text2SQL React 구현** 🔥
+
+#### **`frontend/src/pages/SFR007_CDW/components/Text2SQL.tsx`**
+```tsx
+import React, { useState } from 'react'
+import { Card, Input, Button, Space, Alert, Table, Typography, Tag, Divider } from 'antd'
+import { SendOutlined, LoadingOutlined } from '@ant-design/icons'
+import { useMutation } from '@tanstack/react-query'
+import { text2sqlAPI } from '@/services/api'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+
+const { TextArea } = Input
+const { Title, Text, Paragraph } = Typography
+
+const Text2SQL: React.FC = () => {
+  const [question, setQuestion] = useState('')
+  const [sqlResult, setSqlResult] = useState<any>(null)
+
+  const generateMutation = useMutation({
+    mutationFn: text2sqlAPI.generateSQL,
+    onSuccess: (data) => {
+      setSqlResult(data)
+    },
+  })
+
+  const handleSubmit = () => {
+    if (!question.trim()) return
+    generateMutation.mutate(question)
+  }
+
+  const handleExample = (exampleQuestion: string) => {
+    setQuestion(exampleQuestion)
+  }
+
+  return (
+    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Alert
+        message="자연어를 SQL로 변환"
+        description="일상적인 질문을 입력하시면, AI가 적절한 SQL 쿼리를 생성합니다."
+        type="info"
+        showIcon
+      />
+
+      <Card title="질의 입력">
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <TextArea
+            rows={4}
+            placeholder="예) 2023년에 당뇨병 진단받은 50대 남성 환자는 몇 명인가요?"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onPressEnter={(e) => {
+              if (e.shiftKey) return // Shift+Enter는 줄바꿈
+              e.preventDefault()
+              handleSubmit()
+            }}
+          />
+          
+          <Space>
+            <Button
+              type="primary"
+              icon={<SendOutlined />}
+              onClick={handleSubmit}
+              loading={generateMutation.isPending}
+            >
+              SQL 생성
+            </Button>
+            
+            <Text type="secondary">또는 예시 질문 선택:</Text>
+          </Space>
+
+          <Space wrap>
+            <Button
+              size="small"
+              onClick={() => handleExample('2023년에 고혈압 환자는 몇 명인가요?')}
+            >
+              예시 1
+            </Button>
+            <Button
+              size="small"
+              onClick={() => handleExample('50대 남성 중 당뇨병 환자의 평균 진료 횟수는?')}
+            >
+              예시 2
+            </Button>
+            <Button
+              size="small"
+              onClick={() => handleExample('최근 1년간 가장 많이 진단된 질병 상위 5개는?')}
+            >
+              예시 3
+            </Button>
+          </Space>
+        </Space>
+      </Card>
+
+      {generateMutation.isPending && (
+        <Card>
+          <Space>
+            <LoadingOutlined style={{ fontSize: 24 }} />
+            <Text>AI가 SQL을 생성하고 있습니다...</Text>
+          </Space>
+        </Card>
+      )}
+
+      {sqlResult && (
+        <>
+          <Card title="생성된 SQL">
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <div>
+                <Text strong>신뢰도: </Text>
+                <Tag color={sqlResult.confidence > 0.8 ? 'green' : 'orange'}>
+                  {(sqlResult.confidence * 100).toFixed(1)}%
+                </Tag>
+              </div>
+              
+              <SyntaxHighlighter
+                language="sql"
+                style={vscDarkPlus}
+                customStyle={{ borderRadius: 8 }}
+              >
+                {sqlResult.sql}
+              </SyntaxHighlighter>
+
+              <Alert
+                message="SQL 설명"
+                description={sqlResult.explanation}
+                type="success"
+                showIcon
+              />
+            </Space>
+          </Card>
+
+          {sqlResult.execution_result && (
+            <Card title="실행 결과">
+              <Table
+                dataSource={sqlResult.execution_result.results}
+                columns={Object.keys(sqlResult.execution_result.results[0] || {}).map(
+                  (key) => ({
+                    title: key,
+                    dataKey: key,
+                    key,
+                  })
+                )}
+                pagination={{ pageSize: 10 }}
+              />
+              
+              <Divider />
+              
+              <Paragraph>
+                <Text strong>결과 설명: </Text>
+                {sqlResult.execution_result.natural_language_explanation}
+              </Paragraph>
+              
+              <Space>
+                <Text type="secondary">
+                  실행 시간: {sqlResult.execution_result.execution_time}ms
+                </Text>
+                <Text type="secondary">
+                  결과 행 수: {sqlResult.execution_result.row_count}개
+                </Text>
+              </Space>
+            </Card>
+          )}
+        </>
+      )}
+    </Space>
+  )
+}
+
+export default Text2SQL
+```
+
+---
+
+## **Docker 배포 구성**
+
+#### **`docker/docker-compose.yml`**
+```yaml
+version: '3.8'
+
+services:
+  # PostgreSQL 데이터베이스
+  postgres:
+    image: postgres:15-alpine
+    container_name: asan-postgres
+    environment:
+      POSTGRES_DB: asan_idp
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secure_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - asan-network
+
+  # Redis 캐시
+  redis:
+    image: redis:7-alpine
+    container_name: asan-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - asan-network
+
+  # Backend (FastAPI)
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/backend.Dockerfile
+    container_name: asan-backend
+    environment:
+      DATABASE_URL: postgresql://admin:secure_password@postgres:5432/asan_idp
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ../backend:/app
+    networks:
+      - asan-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Frontend (React + Vite)
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    container_name: asan-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    networks:
+      - asan-network
+    command: npm run dev -- --host
+
+volumes:
+  postgres_data:
+
+networks:
+  asan-network:
+    driver: bridge
+```
+
+---
+
+## **실행 방법**
+
+### **개발 환경 (로컬)**
+
+```bash
+# Terminal 1: Backend
+cd C:\projects\datastreams\asan\backend
+.\venv\Scripts\activate
+uvicorn app.main:app --reload
+
+# Terminal 2: Frontend
+cd C:\projects\datastreams\asan\frontend
+npm run dev
+
+# 접속
+# Frontend: http://localhost:5173
+# Backend API Docs: http://localhost:8000/docs
+```
+
+### **Docker 환경**
+
+```bash
+cd C:\projects\datastreams\asan\docker
+docker-compose up -d
+
+# 로그 확인
+docker-compose logs -f
+
+# 종료
+docker-compose down
+```
+
+---
+
+## **다음 단계**
+
+React 기반 통합 대시보드 프레임워크가 완성되면, 이제 다음 중 하나를 선택하세요:
+
+
+**Q1: 지금 바로 구현을 시작하시겠습니까?**
+
+- A) 네, 지금 바로 코드 작성 시작 (어느 부분부터?)
+- B) 먼저 전체 프로젝트 scaffolding 스크립트 제공
+- C) 특정 모듈(SFR-007 Text2SQL 등)부터 상세 구현
+- D) Docker 환경 먼저 셋업
+
+
+**Q2: 데이터 시각화 라이브러리 선호도는?**
+
+- A) Recharts (간단, React 친화적)
+- B) Apache ECharts (강력한 기능)
+- C) Plotly.js (과학/통계 시각화)
+- D) 혼합 사용 (목적별 선택)
+
+
+**Q3: 현재 RTX 3090 환경에서 LLM 로컬 실행을 원하시나요?**
+
+- A) 네, LLaMA/Mistral 등 오픈소스 모델 로컬 실행
+- B) OpenAI API 사용 (빠른 개발)
+- C) 하이브리드 (로컬 + API)

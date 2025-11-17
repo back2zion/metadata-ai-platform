@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: asan-postgres
+    environment:
+      POSTGRES_DB: asan_idp
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secure_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - asan-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: asan-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - asan-network
+
+  # Vector Database - Qdrant
+  qdrant:
+    image: qdrant/qdrant
+    container_name: asan-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - asan-network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: asan-backend
+    environment:
+      DATABASE_URL: postgresql://admin:secure_password@postgres:5432/asan_idp
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_URL: http://qdrant:6333
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+    volumes:
+      - ./backend:/app
+    networks:
+      - asan-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: asan-frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:8000/api/v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - asan-network
+
+volumes:
+  postgres_data:
+  qdrant_data:
+
+networks:
+  asan-network:
+    driver: bridge
