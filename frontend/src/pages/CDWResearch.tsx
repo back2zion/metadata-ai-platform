@@ -104,12 +104,7 @@ const CDWResearch: React.FC = () => {
     <div style={{ padding: '0' }}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* CDW Header */}
-        <Card style={{
-          borderRadius: '12px',
-          border: '1px solid #e9ecef',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-          background: '#ffffff'
-        }}>
+        <Card>
           <Row align="middle" justify="space-between">
             <Col>
               <Title level={3} style={{ 
@@ -155,11 +150,6 @@ const CDWResearch: React.FC = () => {
               사용자 컨텍스트 및 설정
             </span>
           } 
-          style={{
-            borderRadius: '8px',
-            border: '1px solid #e9ecef',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
-          }}
         >
           <Row gutter={[24, 16]}>
             <Col xs={24} sm={8}>
@@ -209,19 +199,13 @@ const CDWResearch: React.FC = () => {
         {/* Main Tabs */}
         <Card 
           bodyStyle={{ padding: 0 }}
-          style={{
-            borderRadius: '8px',
-            border: '1px solid #e9ecef',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
-          }}
         >
           <Tabs 
             activeKey={activeTab} 
             onChange={setActiveTab}
             size="large"
             style={{ 
-              padding: '0 24px',
-              background: '#ffffff'
+              padding: '0 24px'
             }}
             items={[
               {

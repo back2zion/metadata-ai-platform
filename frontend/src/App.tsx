@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConfigProvider } from 'antd';
 import koKR from 'antd/locale/ko_KR';
 import MainLayout from './components/Layout/MainLayout.tsx';
-import Dashboard from './pages/Dashboard.tsx';
+import { Dashboard } from './pages/Dashboard.tsx';
 import DataMart from './pages/DataMart.tsx';
 import BI from './pages/BI.tsx';
 import OLAP from './pages/OLAP.tsx';
@@ -31,12 +31,33 @@ const App: React.FC = () => {
         locale={koKR}
         theme={{
           token: {
-            colorPrimary: '#1a5d3a', // Asan Hospital Green
-            colorSuccess: '#52c41a',
-            colorWarning: '#ff6600', // Asan Hospital Orange
-            colorError: '#ff4d4f',
-            colorInfo: '#1890ff',
-            borderRadius: 8,
+            colorPrimary: '#006241', // ASAN GREEN
+            colorSuccess: '#52A67D', // ASAN Light Green
+            colorWarning: '#FF6F00', // ASAN Orange
+            colorError: '#dc3545',
+            colorInfo: '#006241',
+            borderRadius: 6,
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            fontSize: 14,
+          },
+          components: {
+            Layout: {
+              headerBg: '#ffffff',
+              siderBg: '#ffffff', 
+              bodyBg: '#F5F0E8', // BEIGE
+            },
+            Card: {
+              borderRadius: 8,
+              boxShadow: '0 2px 8px rgba(0, 98, 65, 0.06)',
+            },
+            Button: {
+              borderRadius: 6,
+              primaryShadow: '0 2px 4px rgba(0, 98, 65, 0.2)',
+            },
+            Menu: {
+              itemSelectedBg: 'rgba(0, 98, 65, 0.08)',
+              itemHoverBg: 'rgba(0, 98, 65, 0.05)',
+            },
           },
         }}
       >

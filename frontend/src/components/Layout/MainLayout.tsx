@@ -87,17 +87,22 @@ const MainLayout: React.FC = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider width={280} theme="dark">
-        <div style={{ padding: '16px', textAlign: 'center' }}>
-          <Title level={4} style={{ color: 'white', margin: 0 }}>
-            🏥 아산병원 IDP POC
-          </Title>
-          <div style={{ color: '#999', fontSize: '12px', marginTop: '4px' }}>
-            통합 데이터 플랫폼
-          </div>
+      <Sider width={280} theme="light" style={{ borderRight: '1px solid #e9ecef' }}>
+        <div style={{ 
+          padding: '16px', 
+          textAlign: 'center',
+          borderBottom: '1px solid #e9ecef'
+        }}>
+          <img 
+            src="/asan_logo.png" 
+            alt="Asan Medical Center Logo" 
+            style={{ 
+              height: '40px'
+            }} 
+          />
         </div>
         <Menu
-          theme="dark"
+          theme="light"
           mode="inline"
           selectedKeys={[location.pathname]}
           items={menuItems}
@@ -105,12 +110,12 @@ const MainLayout: React.FC = () => {
         />
       </Sider>
       <Layout>
-        <Header style={{ background: '#fff', padding: '0 24px' }}>
+        <Header style={{ padding: '0 24px' }}>
           <Title level={4} style={{ margin: 0, lineHeight: '64px' }}>
             {getPageTitle()}
           </Title>
         </Header>
-        <Content style={{ margin: '24px', padding: '24px', background: '#fff', minHeight: 280 }}>
+        <Content style={{ margin: '24px', padding: '24px', minHeight: 280 }}>
           <Outlet />
         </Content>
       </Layout>
