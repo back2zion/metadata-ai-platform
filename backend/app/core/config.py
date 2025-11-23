@@ -26,7 +26,6 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: Optional[str] = None
     
     # Vector Database
-    CHROMA_PERSIST_DIR: str = "./chroma_db"
     QDRANT_URL: str = "http://localhost:6333"
     
     # HumanLayer Integration

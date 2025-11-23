@@ -2,11 +2,15 @@ import React from 'react';
 import { Layout, Menu, Space, Typography } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
-  DashboardOutlined,
+  HomeOutlined,
   DatabaseOutlined,
+  BarChartOutlined,
+  FundOutlined,
+  ApiOutlined,
+  RobotOutlined,
   ExperimentOutlined,
-  CloudServerOutlined,
 } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -15,49 +19,71 @@ const MainLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const menuItems = [
+  const menuItems: MenuProps['items'] = [
     {
       key: '/dashboard',
-      icon: <DashboardOutlined />,
-      label: '대시보드',
+      icon: <HomeOutlined />,
+      label: '홈 대시보드 (SFR-001)',
     },
     {
-      type: 'divider' as const,
-    },
-    {
-      key: 'mvp-group',
-      label: 'MVP 기능',
-      type: 'group' as const,
-    },
-    {
-      key: '/cdw-research',
-      icon: <ExperimentOutlined />,
-      label: 'SFR-007 CDW 연구 (Text2SQL)',
-    },
-    {
-      type: 'divider' as const,
-    },
-    {
-      key: 'commercial-group',
-      label: '상용 솔루션 (개발 예정)',
-      type: 'group' as const,
-    },
-    {
-      key: '/data-fabric',
-      icon: <CloudServerOutlined />,
-      label: '데이터 페브릭',
+      key: 'group-data',
+      label: '데이터 관리',
+      type: 'group',
     },
     {
       key: '/datamart',
       icon: <DatabaseOutlined />,
-      label: 'SFR-002 데이터마트 (Tera ONE)',
-      disabled: true,
+      label: 'SFR-002: 데이터마트',
+    },
+    {
+      key: '/etl',
+      icon: <ApiOutlined />,
+      label: 'SFR-005: ETL',
+    },
+    {
+      key: 'group-analysis',
+      label: '분석 & 시각화',
+      type: 'group',
+    },
+    {
+      key: '/bi',
+      icon: <BarChartOutlined />,
+      label: 'SFR-003: BI',
+    },
+    {
+      key: '/olap',
+      icon: <FundOutlined />,
+      label: 'SFR-004: OLAP',
+    },
+    {
+      key: 'group-ai',
+      label: 'AI & 연구',
+      type: 'group',
+    },
+    {
+      key: '/ai-environment',
+      icon: <RobotOutlined />,
+      label: 'SFR-006: AI 분석환경',
+    },
+    {
+      key: '/cdw',
+      icon: <ExperimentOutlined />,
+      label: 'SFR-007: CDW 연구',
     },
   ];
 
   const handleMenuClick = ({ key }: { key: string }) => {
     navigate(key);
   };
+  
+  const getPageTitle = () => {
+    for (const item of menuItems) {
+      if (item && 'key' in item && item.key === location.pathname) {
+        return item.label;
+      }
+    }
+    return '아산병원 IDP';
+  }
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -81,7 +107,7 @@ const MainLayout: React.FC = () => {
       <Layout>
         <Header style={{ background: '#fff', padding: '0 24px' }}>
           <Title level={4} style={{ margin: 0, lineHeight: '64px' }}>
-            {menuItems.find((item) => item?.key === location.pathname)?.label || '아산병원 IDP'}
+            {getPageTitle()}
           </Title>
         </Header>
         <Content style={{ margin: '24px', padding: '24px', background: '#fff', minHeight: 280 }}>

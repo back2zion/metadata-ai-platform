@@ -4,7 +4,7 @@ uvicorn[standard]==0.27.0
 python-multipart==0.0.6
 
 # Database
-sqlalchemy==2.0.25
+sqlalchemy==1.4.52
 asyncpg==0.29.0
 psycopg2-binary==2.9.9
 alembic==1.13.1
@@ -30,11 +30,10 @@ passlib[bcrypt]==1.7.4
 
 # AI/LLM
 langchain==0.1.5
-langchain-community==0.0.13
+langchain-community==0.0.17
 langchain-core==0.1.16
 langchain-openai==0.0.5
 openai==1.10.0
-chromadb==0.4.22
 qdrant-client==1.7.3
 
 # Data Quality

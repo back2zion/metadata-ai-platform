@@ -1,12 +1,10 @@
 """
-서울아산병원 AI 플랫폼 - ChromaDB 벡터 스토어
+서울아산병원 AI 플랫폼 - Qdrant 벡터 스토어
 의료 문서 임베딩 및 검색을 위한 벡터 데이터베이스 관리
 """
-import chromadb
-from chromadb.config import Settings
-from chromadb.utils import embedding_functions
+import qdrant_client
+from qdrant_client.http import models
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 import os
@@ -14,33 +12,25 @@ import uuid
 import logging
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+from backend.app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 class MedicalVectorStore:
-    """의료 데이터용 벡터 스토어 클래스"""
+    """의료 데이터용 Qdrant 벡터 스토어 클래스"""
     
     def __init__(self, 
-                 persist_directory: str = "./chroma_medical_db",
                  embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"):
         """
-        ChromaDB 벡터 스토어 초기화
+        Qdrant 벡터 스토어 초기화
         
         Args:
-            persist_directory: ChromaDB 데이터 저장 디렉토리
             embedding_model: 임베딩 모델명
         """
-        self.persist_directory = persist_directory
         self.embedding_model_name = embedding_model
         
-        # ChromaDB 클라이언트 설정
-        self.client = chromadb.PersistentClient(
-            path=persist_directory,
-            settings=Settings(
-                allow_reset=True,
-                anonymized_telemetry=False
-            )
-        )
+        # Qdrant 클라이언트 설정
+        self.client = qdrant_client.QdrantClient(url=settings.QDRANT_URL)
         
         # 임베딩 모델 설정
         self.embeddings = HuggingFaceEmbeddings(
@@ -48,6 +38,7 @@ class MedicalVectorStore:
             model_kwargs={'device': 'cpu'},
             encode_kwargs={'normalize_embeddings': True}
         )
+        self.embedding_size = self.embeddings.client.get_sentence_embedding_dimension()
         
         # 텍스트 분할기 설정
         self.text_splitter = RecursiveCharacterTextSplitter(
@@ -57,35 +48,33 @@ class MedicalVectorStore:
             separators=["\n\n", "\n", " ", ""]
         )
         
-        # 컬렉션들 초기화
-        self.collections = {
-            'medical_documents': None,
-            'clinical_guidelines': None,
-            'research_papers': None,
-            'patient_records': None,
-            'drug_information': None
-        }
+        # 컬렉션 이름 목록
+        self.collection_names = [
+            'medical_documents',
+            'clinical_guidelines',
+            'research_papers',
+            'patient_records',
+            'drug_information'
+        ]
         
         self._initialize_collections()
     
     def _initialize_collections(self):
         """벡터 스토어 컬렉션들 초기화"""
         try:
-            for collection_name in self.collections.keys():
-                try:
-                    collection = self.client.get_collection(collection_name)
+            existing_collections = [col.name for col in self.client.get_collections().collections]
+            for collection_name in self.collection_names:
+                if collection_name in existing_collections:
                     logger.info(f"기존 컬렉션 로드됨: {collection_name}")
-                except:
-                    collection = self.client.create_collection(
-                        name=collection_name,
-                        embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(
-                            model_name=self.embedding_model_name
-                        ),
-                        metadata={"created_at": datetime.now().isoformat()}
+                else:
+                    self.client.create_collection(
+                        collection_name=collection_name,
+                        vectors_config=models.VectorParams(
+                            size=self.embedding_size,
+                            distance=models.Distance.COSINE
+                        )
                     )
                     logger.info(f"새 컬렉션 생성됨: {collection_name}")
-                
-                self.collections[collection_name] = collection
                 
         except Exception as e:
             logger.error(f"컬렉션 초기화 오류: {e}")
@@ -104,27 +93,24 @@ class MedicalVectorStore:
             추가된 문서들의 ID 리스트
         """
         try:
-            collection = self.collections.get(collection_name)
-            if not collection:
-                raise ValueError(f"컬렉션을 찾을 수 없음: {collection_name}")
-            
+            if collection_name not in self.collection_names:
+                raise ValueError(f"지원되지 않는 컬렉션: {collection_name}")
+
+            points_to_upsert = []
             ids = []
-            texts = []
-            metadatas = []
-            
+
             for doc in documents:
-                # 문서 텍스트 분할
                 doc_text = doc.get('content', '')
                 chunks = self.text_splitter.split_text(doc_text)
                 
                 for i, chunk in enumerate(chunks):
-                    doc_id = f"{doc.get('id', str(uuid.uuid4()))}_{i}"
+                    doc_id = str(uuid.uuid4())
                     ids.append(doc_id)
-                    texts.append(chunk)
                     
                     metadata = {
                         'source': doc.get('source', 'unknown'),
                         'title': doc.get('title', ''),
+                        'content': chunk, # 페이로드에 원문 저장
                         'document_type': doc.get('type', 'general'),
                         'chunk_index': i,
                         'total_chunks': len(chunks),
@@ -133,16 +119,25 @@ class MedicalVectorStore:
                         'medical_specialty': doc.get('specialty', ''),
                         'confidence_level': doc.get('confidence', 1.0)
                     }
-                    metadatas.append(metadata)
-            
-            # ChromaDB에 추가
-            collection.add(
-                documents=texts,
-                metadatas=metadatas,
-                ids=ids
+                    
+                    points_to_upsert.append(
+                        models.PointStruct(
+                            id=doc_id,
+                            payload=metadata,
+                            vector=self.embeddings.embed_query(chunk)
+                        )
+                    )
+
+            if not points_to_upsert:
+                return []
+
+            self.client.upsert(
+                collection_name=collection_name,
+                points=points_to_upsert,
+                wait=True
             )
             
-            logger.info(f"{len(ids)}개 청크를 {collection_name}에 추가함")
+            logger.info(f"{len(points_to_upsert)}개 포인트를 {collection_name}에 추가함")
             return ids
             
         except Exception as e:
@@ -153,7 +148,7 @@ class MedicalVectorStore:
                          query: str, 
                          collection_name: str = 'medical_documents',
                          k: int = 5,
-                         filter_criteria: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+                         filter_criteria: Optional[models.Filter] = None) -> List[Dict[str, Any]]:
         """
         유사도 검색 수행
         
@@ -167,28 +162,29 @@ class MedicalVectorStore:
             검색 결과 리스트
         """
         try:
-            collection = self.collections.get(collection_name)
-            if not collection:
-                raise ValueError(f"컬렉션을 찾을 수 없음: {collection_name}")
+            if collection_name not in self.collection_names:
+                raise ValueError(f"지원되지 않는 컬렉션: {collection_name}")
+            
+            query_vector = self.embeddings.embed_query(query)
             
             # 검색 수행
-            results = collection.query(
-                query_texts=[query],
-                n_results=k,
-                where=filter_criteria
+            hits = self.client.search(
+                collection_name=collection_name,
+                query_vector=query_vector,
+                query_filter=filter_criteria,
+                limit=k
             )
             
             # 결과 정리
-            search_results = []
-            if results['documents'] and results['documents'][0]:
-                for i, doc in enumerate(results['documents'][0]):
-                    result = {
-                        'content': doc,
-                        'metadata': results['metadatas'][0][i] if results['metadatas'] and results['metadatas'][0] else {},
-                        'id': results['ids'][0][i] if results['ids'] and results['ids'][0] else '',
-                        'distance': results['distances'][0][i] if results['distances'] and results['distances'][0] else 0.0
-                    }
-                    search_results.append(result)
+            search_results = [
+                {
+                    'content': hit.payload.get('content', ''),
+                    'metadata': hit.payload,
+                    'id': hit.id,
+                    'score': hit.score
+                }
+                for hit in hits
+            ]
             
             logger.info(f"검색 완료: {len(search_results)}개 결과 반환")
             return search_results
@@ -234,14 +230,15 @@ class MedicalVectorStore:
         """각 컬렉션의 문서 수 반환"""
         stats = {}
         try:
-            for name, collection in self.collections.items():
-                if collection:
-                    stats[name] = collection.count()
-                else:
-                    stats[name] = 0
+            for name in self.collection_names:
+                try:
+                    count = self.client.get_collection(collection_name=name).points_count
+                    stats[name] = count
+                except Exception:
+                     stats[name] = 0
         except Exception as e:
             logger.error(f"통계 조회 오류: {e}")
-            stats = {name: 0 for name in self.collections.keys()}
+            stats = {name: 0 for name in self.collection_names}
         
         return stats
     
@@ -275,18 +272,20 @@ class MedicalVectorStore:
             
             for collection_name in collections_to_search:
                 # 필터 조건 설정
-                filter_criteria = {}
+                filter_conditions = []
                 if department:
-                    filter_criteria['hospital_department'] = department
+                    filter_conditions.append(models.FieldCondition(key="hospital_department", match=models.MatchValue(value=department)))
                 if specialty:
-                    filter_criteria['medical_specialty'] = specialty
+                    filter_conditions.append(models.FieldCondition(key="medical_specialty", match=models.MatchValue(value=specialty)))
+                
+                qdrant_filter = models.Filter(must=filter_conditions) if filter_conditions else None
                 
                 # 검색 수행
                 results = self.similarity_search(
                     query=query,
                     collection_name=collection_name,
                     k=3,
-                    filter_criteria=filter_criteria if filter_criteria else None
+                    filter_criteria=qdrant_filter
                 )
                 
                 # 컬렉션 정보 추가
@@ -295,8 +294,8 @@ class MedicalVectorStore:
                 
                 all_results.extend(results)
             
-            # 거리(유사도) 기준으로 정렬
-            all_results.sort(key=lambda x: x.get('distance', float('inf')))
+            # 점수(유사도) 기준으로 정렬 (Qdrant는 점수가 높을수록 유사)
+            all_results.sort(key=lambda x: x.get('score', 0), reverse=True)
             
             # 상위 결과만 반환
             return all_results[:10]
@@ -394,5 +393,5 @@ if __name__ == "__main__":
     for i, result in enumerate(results[:3]):
         print(f"{i+1}. {result['metadata'].get('title', 'No title')}")
         print(f"   Content: {result['content'][:100]}...")
-        print(f"   Distance: {result['distance']:.3f}")
+        print(f"   Score: {result['score']:.3f}")
         print()

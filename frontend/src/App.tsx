@@ -3,10 +3,15 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConfigProvider } from 'antd';
 import koKR from 'antd/locale/ko_KR';
-import MainLayout from './components/Layout/MainLayout';
-import Dashboard from './pages/Dashboard';
-import CDWResearch from './pages/CDWResearch';
-import DataFabric from './pages/DataFabric';
+import MainLayout from './components/Layout/MainLayout.tsx';
+import Dashboard from './pages/Dashboard.tsx';
+import DataMart from './pages/DataMart.tsx';
+import BI from './pages/BI.tsx';
+import OLAP from './pages/OLAP.tsx';
+import ETL from './pages/ETL.tsx';
+import AIEnvironment from './pages/AIEnvironment.tsx';
+import CDWResearch from './pages/CDWResearch.tsx';
+
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -22,7 +27,7 @@ const queryClient = new QueryClient({
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider 
+      <ConfigProvider
         locale={koKR}
         theme={{
           token: {
@@ -41,12 +46,13 @@ const App: React.FC = () => {
               <Route path="/" element={<MainLayout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="cdw-research" element={<CDWResearch />} />
-                <Route path="data-fabric" element={<DataFabric />} />
-                {/* TODO: 상용 솔루션 페이지들 추가 예정 */}
-                {/* <Route path="datamart" element={<DataMart />} /> 데이터스트림즈 Tera ONE */}
-                {/* <Route path="olap" element={<OLAP />} /> 비아이매트릭스 OLAP 솔루션 */}
-                {/* <Route path="etl" element={<ETL />} /> 테라스트림 ETL 솔루션 */}
+                <Route path="datamart" element={<DataMart />} />
+                <Route path="bi" element={<BI />} />
+                <Route path="olap" element={<OLAP />} />
+                <Route path="etl" element={<ETL />} />
+                <Route path="ai-environment" element={<AIEnvironment />} />
+                <Route path="cdw" element={<CDWResearch />} />
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Route>
             </Routes>
           </div>

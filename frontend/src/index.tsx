@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import SimpleApp from './SimpleApp.tsx';
+import App from './App.tsx'; // Import App.tsx directly with explicit extension
 import 'antd/dist/reset.css';
 
 const root = ReactDOM.createRoot(
@@ -8,6 +8,6 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <SimpleApp />
+    <App /> {/* Render App.tsx directly */}
   </React.StrictMode>
 );
