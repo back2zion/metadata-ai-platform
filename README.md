@@ -52,9 +52,11 @@
 ### Frontend (React)
 - **React 18** + **TypeScript**
 - **Ant Design 5**: 엔터프라이즈 UI 컴포넌트
+- **TailwindCSS 3**: 유틸리티 기반 CSS 프레임워크
 - **React Query**: 서버 상태 관리
 - **Recharts & Plotly**: 데이터 시각화
 - **AG-Grid**: 고성능 데이터 그리드
+- **Lucide React**: 모던 아이콘 라이브러리
 
 ### Backend
 - **FastAPI**: REST API 서버
@@ -72,7 +74,7 @@
 ## 📁 프로젝트 구조
 
 ```
-amc/
+asan/
 ├── frontend/                  # React 프론트엔드
 │   ├── src/
 │   │   ├── pages/            # 페이지 컴포넌트
@@ -85,7 +87,10 @@ amc/
 │   │   │   └── AIAgents.tsx
 │   │   ├── components/       # 재사용 컴포넌트
 │   │   ├── services/         # API 서비스
-│   │   └── contexts/         # React Context
+│   │   ├── contexts/         # React Context
+│   │   └── index.css         # TailwindCSS 메인 스타일
+│   ├── tailwind.config.js    # TailwindCSS 설정
+│   ├── postcss.config.js     # PostCSS 설정
 │   └── package.json
 ├── backend/                   # FastAPI 백엔드
 │   ├── app/
@@ -108,7 +113,8 @@ amc/
 
 ```bash
 # 저장소 클론
-cd /home/babelai/projects/datastreams/amc
+git clone https://github.com/back2zion/asan.git
+cd asan
 
 # Python 가상환경 (Backend)
 source .venv/bin/activate
@@ -119,6 +125,7 @@ cd frontend
 npm install
 
 # 환경 변수 설정
+cd ..
 cp .env.example .env
 # .env 파일을 편집하여 API 키 등 설정
 ```
@@ -158,7 +165,7 @@ docker-compose down
 
 ## 🔗 접속 URL
 
-- **React 대시보드**: http://localhost:3001
+- **React 대시보드**: http://localhost:3000
 - **FastAPI 문서**: http://localhost:8000/docs
 - **PostgreSQL**: localhost:5432
 - **Redis**: localhost:6379
@@ -234,6 +241,7 @@ result = await medical_agent.process_query(
 - [x] POC 컴포넌트 통합
 - [x] React 프론트엔드 전환
 - [x] 7개 SFR 페이지 구현
+- [x] TailwindCSS 3 및 PostCSS 설정
 - [x] HumanLayer 에이전트 통합
 - [x] LangGraph 의료 에이전트
 - [x] Text2SQL 한국어 지원
