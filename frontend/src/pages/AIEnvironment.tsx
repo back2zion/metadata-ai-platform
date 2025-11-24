@@ -9,8 +9,6 @@ import {
   FundProjectionScreenOutlined
 } from '@ant-design/icons';
 
-const { TabPane } = Tabs;
-
 const AIEnvironment: React.FC = () => {
   const [selectedEnvironment, setSelectedEnvironment] = useState('jupyter');
 
@@ -174,111 +172,130 @@ const AIEnvironment: React.FC = () => {
       </Row>
 
       <Card title="SFR-006: AI 데이터 분석환경">
-        <Tabs defaultActiveKey="containers">
-          <TabPane tab="컨테이너 관리" key="containers">
-            <Space style={{ marginBottom: 16 }}>
-              <Button type="primary" icon={<CloudServerOutlined />}>
-                새 컨테이너 생성
-              </Button>
-              <Button icon={<ExperimentOutlined />}>
-                템플릿에서 생성
-              </Button>
-            </Space>
-            
-            <Table 
-              columns={containerColumns} 
-              dataSource={containers}
-              pagination={false}
-            />
-            
-            <Alert
-              message="GPU 리소스 현황"
-              description="RTX 3090 2대 중 2대 사용 중. GPU 가상화를 통해 최대 4개의 컨테이너에서 동시 사용 가능합니다."
-              type="info"
-              showIcon
-              style={{ marginTop: 16 }}
-            />
-          </TabPane>
-          
-          <TabPane tab="분석 템플릿" key="templates">
-            <Row gutter={[16, 16]}>
-              {templates.map((template, idx) => (
-                <Col span={12} key={idx}>
-                  <Card>
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                      <Space>
-                        {template.icon}
-                        <strong>{template.name}</strong>
-                      </Space>
-                      <p>{template.description}</p>
-                      <Space wrap>
-                        {template.libraries.map((lib, libIdx) => (
-                          <Tag key={libIdx}>{lib}</Tag>
-                        ))}
-                      </Space>
-                      <Button type="primary" block>
-                        이 템플릿으로 시작
-                      </Button>
-                    </Space>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </TabPane>
-          
-          <TabPane tab="리소스 모니터링" key="monitoring">
-            <Row gutter={[16, 16]}>
-              <Col span={12}>
-                <Card title="CPU 사용률">
-                  <Progress percent={45} status="active" />
-                  <p>12 cores / 32 cores 사용 중</p>
+        <Tabs 
+          defaultActiveKey="containers"
+          items={[
+            {
+              key: 'containers',
+              label: '컨테이너 관리',
+              children: (
+                <div>
+                  <Space style={{ marginBottom: 16 }}>
+                    <Button type="primary" icon={<CloudServerOutlined />}>
+                      새 컨테이너 생성
+                    </Button>
+                    <Button icon={<ExperimentOutlined />}>
+                      템플릿에서 생성
+                    </Button>
+                  </Space>
+                  
+                  <Table 
+                    columns={containerColumns} 
+                    dataSource={containers}
+                    pagination={false}
+                    rowKey="id"
+                  />
+                  
+                  <Alert
+                    message="GPU 리소스 현황"
+                    description="RTX 3090 2대 중 2대 사용 중. GPU 가상화를 통해 최대 4개의 컨테이너에서 동시 사용 가능합니다."
+                    type="info"
+                    showIcon
+                    style={{ marginTop: 16 }}
+                  />
+                </div>
+              )
+            },
+            {
+              key: 'templates',
+              label: '분석 템플릿',
+              children: (
+                <Row gutter={[16, 16]}>
+                  {templates.map((template, idx) => (
+                    <Col span={12} key={idx}>
+                      <Card>
+                        <Space direction="vertical" style={{ width: '100%' }}>
+                          <Space>
+                            {template.icon}
+                            <strong>{template.name}</strong>
+                          </Space>
+                          <p>{template.description}</p>
+                          <Space wrap>
+                            {template.libraries.map((lib, libIdx) => (
+                              <Tag key={libIdx}>{lib}</Tag>
+                            ))}
+                          </Space>
+                          <Button type="primary" block>
+                            이 템플릿으로 시작
+                          </Button>
+                        </Space>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              )
+            },
+            {
+              key: 'monitoring',
+              label: '리소스 모니터링',
+              children: (
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Card title="CPU 사용률">
+                      <Progress percent={45} status="active" />
+                      <p>12 cores / 32 cores 사용 중</p>
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card title="메모리 사용률">
+                      <Progress percent={72} status="active" />
+                      <p>46 GB / 64 GB 사용 중</p>
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card title="GPU 사용률 (RTX 3090 #1)">
+                      <Progress percent={85} strokeColor="#52c41a" />
+                      <p>VRAM: 20 GB / 24 GB</p>
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card title="GPU 사용률 (RTX 3090 #2)">
+                      <Progress percent={45} strokeColor="#52c41a" />
+                      <p>VRAM: 11 GB / 24 GB</p>
+                    </Card>
+                  </Col>
+                </Row>
+              )
+            },
+            {
+              key: 'libraries',
+              label: '라이브러리 관리',
+              children: (
+                <Card>
+                  <List
+                    header={<div>설치된 주요 라이브러리</div>}
+                    bordered
+                    dataSource={[
+                      'Python 3.11.5',
+                      'TensorFlow 2.14.0 (GPU)',
+                      'PyTorch 2.1.0 (CUDA 11.8)',
+                      'scikit-learn 1.3.2',
+                      'pandas 2.1.3',
+                      'numpy 1.24.3',
+                      'LangChain 0.0.350',
+                      'transformers 4.36.0',
+                    ]}
+                    renderItem={item => (
+                      <List.Item>
+                        <Badge status="success" text={item} />
+                      </List.Item>
+                    )}
+                  />
                 </Card>
-              </Col>
-              <Col span={12}>
-                <Card title="메모리 사용률">
-                  <Progress percent={72} status="active" />
-                  <p>46 GB / 64 GB 사용 중</p>
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card title="GPU 사용률 (RTX 3090 #1)">
-                  <Progress percent={85} strokeColor="#52c41a" />
-                  <p>VRAM: 20 GB / 24 GB</p>
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card title="GPU 사용률 (RTX 3090 #2)">
-                  <Progress percent={45} strokeColor="#52c41a" />
-                  <p>VRAM: 11 GB / 24 GB</p>
-                </Card>
-              </Col>
-            </Row>
-          </TabPane>
-          
-          <TabPane tab="라이브러리 관리" key="libraries">
-            <Card>
-              <List
-                header={<div>설치된 주요 라이브러리</div>}
-                bordered
-                dataSource={[
-                  'Python 3.11.5',
-                  'TensorFlow 2.14.0 (GPU)',
-                  'PyTorch 2.1.0 (CUDA 11.8)',
-                  'scikit-learn 1.3.2',
-                  'pandas 2.1.3',
-                  'numpy 1.24.3',
-                  'LangChain 0.0.350',
-                  'transformers 4.36.0',
-                ]}
-                renderItem={item => (
-                  <List.Item>
-                    <Badge status="success" text={item} />
-                  </List.Item>
-                )}
-              />
-            </Card>
-          </TabPane>
-        </Tabs>
+              )
+            }
+          ]}
+        />
       </Card>
     </div>
   );

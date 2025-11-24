@@ -198,7 +198,7 @@ const CDWResearch: React.FC = () => {
 
         {/* Main Tabs */}
         <Card 
-          bodyStyle={{ padding: 0 }}
+          styles={{ body: { padding: 0 } }}
         >
           <Tabs 
             activeKey={activeTab} 

@@ -208,7 +208,7 @@ const PromptEnhancement: React.FC = () => {
 
         {/* Main Tabs */}
         <Card 
-          bodyStyle={{ padding: 0 }}
+          styles={{ body: { padding: 0 } }}
           style={{
             borderRadius: '8px',
             border: '1px solid #e9ecef',
