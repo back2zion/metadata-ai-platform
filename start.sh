@@ -20,7 +20,7 @@ start_backend() {
 }
 
 start_streamlit() {
-    echo "Starting Streamlit frontend..."
+    echo "Starting Streamlit frontend for K-BANK platform..."
     streamlit run app.py --server.port 8501 &
     STREAMLIT_PID=$!
     echo "Streamlit started with PID: $STREAMLIT_PID"
