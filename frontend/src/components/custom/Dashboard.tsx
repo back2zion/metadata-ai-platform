@@ -15,18 +15,18 @@ const ingestionData = [
 ];
 
 const qualityData = [
-  { domain: '임상(Clinical)', score: 98, issues: 12 },
-  { domain: '유전체(Genomics)', score: 92, issues: 45 },
-  { domain: '영상(Imaging)', score: 88, issues: 78 },
-  { domain: '원무(Admin)', score: 99, issues: 3 },
-  { domain: 'IoT/활력징후', score: 85, issues: 156 },
+  { domain: '고객정보(CIF)', score: 98, issues: 12 },
+  { domain: '계좌/거래(Account)', score: 92, issues: 45 },
+  { domain: '상품(Product)', score: 88, issues: 78 },
+  { domain: '위험관리(Risk)', score: 99, issues: 3 },
+  { domain: '외부연계(External)', score: 85, issues: 156 },
 ];
 
-// Mock Data for IoT Stream
-const generateIoTData = () => Array.from({ length: 20 }, (_, i) => ({
+// Mock Data for Transaction Stream
+const generateTransactionData = () => Array.from({ length: 20 }, (_, i) => ({
   time: i,
-  heartRate: 60 + Math.random() * 40,
-  spo2: 95 + Math.random() * 5
+  volume: 1000 + Math.random() * 2000,
+  amount: 50 + Math.random() * 100
 }));
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -79,14 +79,14 @@ const StatCard: React.FC<{ title: string; value: string; sub: string; icon: Reac
 
 export const Dashboard: React.FC = () => {
   const [viewMode, setViewMode] = useState<'OPERATIONAL' | 'ARCHITECTURE'>('OPERATIONAL');
-  const [iotData, setIotData] = useState(generateIoTData());
+  const [transactionData, setTransactionData] = useState(generateTransactionData());
   const [drillDownData, setDrillDownData] = useState<{ title: string; data: any } | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIotData(prev => [
+      setTransactionData(prev => [
         ...prev.slice(1),
-        { time: prev[prev.length - 1].time + 1, heartRate: 60 + Math.random() * 40, spo2: 95 + Math.random() * 5 }
+        { time: prev[prev.length - 1].time + 1, volume: 1000 + Math.random() * 2000, amount: 50 + Math.random() * 100 }
       ]);
     }, 1000);
     return () => clearInterval(interval);
@@ -105,7 +105,7 @@ export const Dashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-[#53565A]">플랫폼 현황 (Dashboard)</h2>
-          <p className="text-[#A8A8A8] text-sm">아산 의료 데이터 패브릭 실시간 모니터링</p>
+          <p className="text-[#A8A8A8] text-sm">K-BANK 메타데이터 AI 플랫폼 실시간 모니터링</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
@@ -175,7 +175,7 @@ export const Dashboard: React.FC = () => {
             <StatCard 
               title="보안 준수율" 
               value="99.9%" 
-              sub="HIPAA / GDPR" 
+              sub="PCI-DSS / Basel III" 
               icon={<ShieldCheck size={20} />} 
             />
           </div>
@@ -319,24 +319,24 @@ export const Dashboard: React.FC = () => {
                 </div>
              </div>
 
-             {/* Real-time IoT Widget */}
+             {/* Real-time Transaction Widget */}
              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-col">
                 <h3 className="text-lg font-bold text-[#53565A] mb-4 flex items-center gap-2">
                     <Wifi size={20} className="text-[#52A67D] animate-pulse" />
-                    IoT 활력징후 (Real-time)
+                    실시간 거래량 (Real-time)
                 </h3>
                 <div className="flex-grow min-h-[150px]">
                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={iotData}>
-                         <Line type="monotone" dataKey="heartRate" stroke="#FF6F00" strokeWidth={2} dot={false} isAnimationActive={false} />
-                         <Line type="monotone" dataKey="spo2" stroke="#52A67D" strokeWidth={2} dot={false} isAnimationActive={false} />
+                      <LineChart data={transactionData}>
+                         <Line type="monotone" dataKey="volume" stroke="#FF6F00" strokeWidth={2} dot={false} isAnimationActive={false} />
+                         <Line type="monotone" dataKey="amount" stroke="#52A67D" strokeWidth={2} dot={false} isAnimationActive={false} />
                          <YAxis hide domain={['auto', 'auto']} />
                       </LineChart>
                    </ResponsiveContainer>
                 </div>
                 <div className="flex justify-between text-xs mt-2 font-mono">
-                   <div className="text-[#FF6F00]">HR: {Math.round(iotData[iotData.length-1].heartRate)} bpm</div>
-                   <div className="text-[#52A67D]">SpO2: {Math.round(iotData[iotData.length-1].spo2)}%</div>
+                   <div className="text-[#FF6F00]">거래건수: {Math.round(transactionData[transactionData.length-1].volume)}</div>
+                   <div className="text-[#52A67D]">평균금액: {Math.round(transactionData[transactionData.length-1].amount)}만원</div>
                 </div>
              </div>
           </div>
@@ -346,15 +346,15 @@ export const Dashboard: React.FC = () => {
         <div className="bg-white p-10 rounded-xl border border-gray-200 shadow-sm min-h-[500px] flex items-center justify-center relative overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
            <div className="relative z-10 w-full max-w-4xl">
-              <h3 className="text-center font-bold text-xl text-[#006241] mb-10">Asan Intelligent Data Fabric Architecture</h3>
+              <h3 className="text-center font-bold text-xl text-[#006241] mb-10">K-BANK Metadata AI Platform Architecture</h3>
               <div className="flex justify-between items-center gap-4">
                  {/* Source */}
                  <div className="flex flex-col items-center gap-2 p-4 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50">
                     <Database size={32} className="text-gray-400" />
-                    <span className="font-bold text-sm text-gray-500">HIS / EMR / PACS</span>
+                    <span className="font-bold text-sm text-gray-500">Core Banking / CIF / DW</span>
                  </div>
                  <div className="h-0.5 flex-1 bg-gray-300 relative">
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] bg-white px-2 text-gray-400">CDC / HL7</div>
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] bg-white px-2 text-gray-400">CDC / API</div>
                     <div className="absolute right-0 -top-1.5 w-0 h-0 border-t-[6px] border-t-transparent border-l-[8px] border-l-gray-300 border-b-[6px] border-b-transparent"></div>
                  </div>
                  
