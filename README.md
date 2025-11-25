@@ -64,8 +64,9 @@ Data Layer (EDB + Redis + Elasticsearch + Vector DB)
 ## 📁 프로젝트 구조
 
 ```
-/
-├── docs/                           # 설계 문서
+K-BANK-Metadata-AI-Platform/
+│
+├── 📋 docs/                       # 📚 설계 문서
 │   ├── PRD.md                     # 제품 요구사항 정의서
 │   ├── TECHNICAL_ARCHITECTURE_DESIGN.md  # 기술 아키텍처 설계서
 │   ├── DATABASE_DESIGN.md         # 데이터베이스 설계서
@@ -73,25 +74,47 @@ Data Layer (EDB + Redis + Elasticsearch + Vector DB)
 │   ├── SECURITY_COMPLIANCE_DESIGN.md    # 보안 컴플라이언스 설계서
 │   ├── DEVELOPMENT_PLAN.md       # 개발 계획서
 │   ├── SIDEBAR_MENU_PLAN.md      # 사이드바 메뉴 기획서
-│   └── SCREEN_WIREFRAME_PLAN.md  # 화면 와이어프레임 기획서
-├── frontend/                      # React 프론트엔드
+│   ├── SCREEN_WIREFRAME_PLAN.md  # 화면 와이어프레임 기획서
+│   └── KBANK_CORPORATE_COLORS.md # K-BANK 브랜드 가이드
+│
+├── 🎨 frontend/                   # React 18 + TypeScript
 │   ├── src/
-│   │   ├── components/           # 재사용 컴포넌트
-│   │   ├── pages/               # 페이지 컴포넌트
-│   │   ├── services/            # API 서비스
-│   │   ├── store/               # 상태 관리
+│   │   ├── components/           # 재사용 컴포넌트 (Layout, AI, Custom)
+│   │   ├── pages/               # 페이지 컴포넌트 (Dashboard, ETL, etc.)
+│   │   ├── services/            # API 서비스 레이어
+│   │   ├── contexts/            # React Context (Auth 등)
 │   │   └── types/               # TypeScript 타입 정의
-│   ├── package.json
-│   └── vite.config.ts
-├── backend/                       # Python FastAPI 백엔드
+│   ├── public/                  # 정적 파일
+│   ├── package.json             # 의존성 관리
+│   └── tailwind.config.js       # TailwindCSS 설정
+│
+├── ⚡ backend/                    # FastAPI + Python 3.9+
 │   ├── app/
-│   │   ├── api/                 # API 라우터
-│   │   ├── models/              # 데이터 모델
-│   │   ├── services/            # 비즈니스 로직
-│   │   └── core/                # 설정 및 유틸리티
-│   └── requirements.txt
-├── rfp.txt                       # 원본 RFP 문서
-└── README.md
+│   │   ├── api/v1/              # REST API 엔드포인트
+│   │   ├── application/         # Application Layer (DTO, Use Cases)
+│   │   ├── domain/              # Domain Layer (Entities, Value Objects)
+│   │   ├── services/            # Business Logic Services
+│   │   ├── core/                # 설정 및 유틸리티
+│   │   └── main.py              # FastAPI 애플리케이션 진입점
+│   ├── data/kbank_synthetic/    # K-BANK 테스트 데이터
+│   ├── tests/                   # 테스트 코드 (Unit, Integration, E2E)
+│   └── requirements.txt         # Python 의존성
+│
+├── 🚀 scripts/                   # 실행 스크립트
+│   ├── start-dev.sh             # 개발환경 시작
+│   └── start.sh                 # 프로덕션 시작
+│
+├── 🐳 Docker & Configuration      # 컨테이너 설정
+│   ├── Dockerfile               # 메인 Docker 이미지
+│   ├── docker-compose.yml       # 전체 스택 orchestration
+│   └── requirements.txt         # 루트 의존성 파일
+│
+├── 📄 Project Files              # 프로젝트 파일
+│   ├── README.md                # 프로젝트 가이드 (현재 파일)
+│   └── rfp.txt                  # 원본 RFP 요구사항
+│
+└── 🔧 Configuration              # 설정 파일들
+    └── .gitignore               # Git 무시 파일
 ```
 
 ## 🚀 빠른 시작
