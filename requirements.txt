@@ -1,3 +1,4 @@
 # K-BANK Metadata AI Platform Requirements
+# 최신 의존성 패키지 포함
 # Include backend requirements
 -r backend/requirements.txt

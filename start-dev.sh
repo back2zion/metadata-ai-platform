@@ -16,8 +16,8 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🏦 Starting K-BANK Metadata AI Platform${NC}"
-echo -e "${BLUE}======================================${NC}"
+echo -e "${BLUE}🏦 K-BANK Metadata AI Platform 개발환경 시작${NC}"
+echo -e "${BLUE}===========================================${NC}"
 
 # Function to start services
 start_backend() {

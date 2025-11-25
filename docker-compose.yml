@@ -1,4 +1,5 @@
-# K-BANK Metadata AI Platform Docker Compose
+# K-BANK Metadata AI Platform Docker Compose Configuration
+# 최신 버전으로 업데이트
 version: '3.8'
 
 services:
