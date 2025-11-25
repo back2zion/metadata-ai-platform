@@ -1,3 +1,4 @@
+# K-BANK Metadata AI Platform .gitignore
 # Dependencies
 node_modules/
 */node_modules/
