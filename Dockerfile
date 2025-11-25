@@ -1,4 +1,4 @@
-# K-BANK Metadata AI Platform Dockerfile
+# K-BANK Metadata AI Platform - 최신 Docker 설정
 FROM python:3.11-slim
 
 WORKDIR /app
