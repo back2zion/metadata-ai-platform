@@ -1,8 +1,9 @@
+# K-BANK Metadata AI Platform Dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies for K-BANK platform
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \

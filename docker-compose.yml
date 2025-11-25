@@ -1,12 +1,13 @@
+# K-BANK Metadata AI Platform Docker Compose
 version: '3.8'
 
 services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: asan-postgres
+    container_name: kbank-postgres
     environment:
-      POSTGRES_DB: asan_idp
+      POSTGRES_DB: kbank_metadata_platform
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secure_password
     ports:
@@ -14,36 +15,36 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - asan-network
+      - kbank-network
 
   # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: asan-redis
+    container_name: kbank-redis
     ports:
       - "6379:6379"
     networks:
-      - asan-network
+      - kbank-network
 
   # Vector Database - Qdrant
   qdrant:
     image: qdrant/qdrant
-    container_name: asan-qdrant
+    container_name: kbank-qdrant
     ports:
       - "6333:6333"
     volumes:
       - qdrant_data:/qdrant/storage
     networks:
-      - asan-network
+      - kbank-network
 
   # FastAPI Backend
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: asan-backend
+    container_name: kbank-backend
     environment:
-      DATABASE_URL: postgresql://admin:secure_password@postgres:5432/asan_idp
+      DATABASE_URL: postgresql://admin:secure_password@postgres:5432/kbank_metadata_platform
       REDIS_URL: redis://redis:6379/0
       QDRANT_URL: http://qdrant:6333
     ports:
@@ -55,7 +56,7 @@ services:
     volumes:
       - ./backend:/app
     networks:
-      - asan-network
+      - kbank-network
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   # React Frontend
@@ -63,7 +64,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: asan-frontend
+    container_name: kbank-frontend
     environment:
       REACT_APP_API_URL: http://localhost:8000/api/v1
     ports:
@@ -74,12 +75,12 @@ services:
       - ./frontend:/app
       - /app/node_modules
     networks:
-      - asan-network
+      - kbank-network
 
 volumes:
   postgres_data:
   qdrant_data:
 
 networks:
-  asan-network:
+  kbank-network:
     driver: bridge

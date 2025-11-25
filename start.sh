@@ -27,7 +27,7 @@ start_streamlit() {
 }
 
 # Start services
-echo "🏥 Starting Seoul Asan Hospital IDP POC..."
+echo "🏦 Starting K-BANK Metadata AI Platform..."
 echo "=" * 50
 
 start_backend
